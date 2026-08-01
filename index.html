@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tools H2K</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:linear-gradient(135deg,#1a0a2e,#2d1b4e,#1a0a2e);color:#e0f0ff;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;min-height:100vh;display:flex;justify-content:center;padding:12px;position:relative}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:rgba(26,10,46,0.3)}
+::-webkit-scrollbar-thumb{background:#a855f744;border-radius:3px}
+
+.container{max-width:480px;width:100%;background:transparent;border-radius:16px;padding:16px;position:relative;z-index:1}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(168,85,247,0.3)}
+.header-left{display:flex;align-items:center;gap:10px}
+.logo{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(168,85,247,0.2);border:2px solid rgba(168,85,247,0.4);flex-shrink:0;overflow:hidden;backdrop-filter:blur(5px)}
+.logo img{width:100%;height:100%;object-fit:cover}
+.header h1{font-size:17px;font-weight:700;color:#a855f7;text-shadow:0 0 20px rgba(168,85,247,0.4)}
+.header h1 small{font-size:9px;font-weight:400;background:rgba(168,85,247,0.2);padding:1px 10px;border-radius:12px;color:#a855f7;border:1px solid rgba(168,85,247,0.3)}
+.badge{background:rgba(168,85,247,0.2);border:1px solid rgba(168,85,247,0.3);padding:3px 12px;border-radius:14px;font-size:9px;color:#a855f7;display:flex;align-items:center;gap:5px;backdrop-filter:blur(5px)}
+.badge::before{content:'';width:5px;height:5px;background:#ff4466;border-radius:50%;display:inline-block;animation:pulse-dot 0.05s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.2}}
+
+.group{margin-bottom:10px}
+.group label{display:block;font-size:10px;font-weight:600;color:#c084fc;margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;text-shadow:0 0 15px rgba(168,85,247,0.3)}
+.group input,.group textarea{width:100%;padding:9px 12px;background:rgba(13,21,32,0.85);border:1px solid rgba(168,85,247,0.3);border-radius:8px;color:#e0f0ff;font-size:13px;transition:all .25s;font-family:inherit;-webkit-appearance:none;backdrop-filter:blur(10px)}
+.group input:focus,.group textarea:focus{outline:none;border-color:#a855f7;box-shadow:0 0 0 3px rgba(168,85,247,0.2)}
+.group textarea{resize:vertical;min-height:38px}
+
+.file-row{display:flex;gap:6px;align-items:center;margin-bottom:8px}
+.file-btn{background:rgba(168,85,247,0.2);color:#a855f7;border:1px solid rgba(168,85,247,0.3);padding:7px 14px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:4px;touch-action:manipulation;backdrop-filter:blur(5px)}
+.file-btn:active{transform:scale(0.95)}
+.file-btn:hover{background:rgba(168,85,247,0.3)}
+.file-btn.reset{background:rgba(255,68,102,0.2);color:#ff4466;border:1px solid rgba(255,68,102,0.3)}
+.file-btn.reset:hover{background:rgba(255,68,102,0.3)}
+.file-info{flex:1;padding:5px 10px;background:rgba(13,21,32,0.85);border-radius:8px;border:1px solid rgba(168,85,247,0.25);font-size:10px;color:rgba(168,85,247,0.5);display:flex;justify-content:space-between;align-items:center;min-height:32px;backdrop-filter:blur(10px)}
+.file-info .name{color:#a855f7;font-weight:500;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-info .count{color:rgba(168,85,247,0.5);font-size:9px}
+#fileInput{display:none}
+
+.btn-group{display:flex;gap:6px;margin:12px 0 10px;flex-wrap:wrap}
+.btn{flex:1;min-width:60px;padding:10px 12px;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:4px;font-family:inherit;touch-action:manipulation;backdrop-filter:blur(5px)}
+.btn:active{transform:scale(0.95)}
+.btn-start{background:linear-gradient(135deg,#ff4466,#7c3aed);color:#fff;border:1px solid rgba(255,68,102,0.4);box-shadow:0 3px 15px rgba(255,68,102,0.3)}
+.btn-start:disabled{opacity:0.4;cursor:not-allowed;box-shadow:none}
+.btn-start:hover:not(:disabled){background:linear-gradient(135deg,#ff6688,#7c3aed);box-shadow:0 5px 25px rgba(255,68,102,0.5)}
+.btn-stop{background:linear-gradient(135deg,rgba(168,85,247,0.4),rgba(124,58,237,0.4));color:#fff;border:1px solid rgba(168,85,247,0.3)}
+.btn-stop:disabled{opacity:0.4;cursor:not-allowed}
+.btn-stop:hover:not(:disabled){background:linear-gradient(135deg,rgba(168,85,247,0.6),rgba(124,58,237,0.6))}
+.btn-test{background:rgba(168,85,247,0.2);color:#a855f7;border:1px solid rgba(168,85,247,0.3)}
+.btn-test:hover{background:rgba(168,85,247,0.35)}
+.btn-clear{background:rgba(168,85,247,0.1);color:rgba(168,85,247,0.6);border:1px solid rgba(168,85,247,0.15)}
+.btn-clear:hover{background:rgba(168,85,247,0.2)}
+
+.status-bar{display:flex;justify-content:space-between;align-items:center;padding:6px 12px;background:rgba(13,21,32,0.85);border-radius:8px;border:1px solid rgba(168,85,247,0.25);margin-bottom:8px;flex-wrap:wrap;gap:4px;backdrop-filter:blur(10px)}
+.status-dot{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#a855f7}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.dot.idle{background:#445566}
+.dot.running{background:#ff4466;animation:pulse-dot 0.01s infinite}
+.dot.limited{background:#ff4466;animation:pulse-dot 0.005s infinite}
+.stats{display:flex;gap:10px}
+.stat{display:flex;align-items:center;gap:3px;font-size:10px;color:rgba(168,85,247,0.6)}
+.stat .num{color:#a855f7;font-weight:700;font-size:12px}
+.stat .num.warning{color:#ff4466}
+
+.list-box{background:rgba(13,21,32,0.85);border-radius:8px;padding:6px;border:1px solid rgba(168,85,247,0.2);max-height:80px;overflow-y:auto;margin-top:4px;backdrop-filter:blur(10px)}
+.list-box .item{display:flex;justify-content:space-between;padding:2px 6px;border-bottom:1px solid rgba(168,85,247,0.05);font-size:10px;color:rgba(168,85,247,0.6)}
+.list-box .item .text{color:#a855f7;font-size:9px;word-break:break-all;flex:1}
+.list-box .item .remove{color:#ff4466;cursor:pointer;padding:0 6px;font-weight:700}
+.list-box .item .remove:active{transform:scale(0.9)}
+
+.console-wrap{background:rgba(13,21,32,0.85);border-radius:8px;border:1px solid rgba(168,85,247,0.2);overflow:hidden;backdrop-filter:blur(10px)}
+.console-head{display:flex;justify-content:space-between;align-items:center;padding:4px 12px;background:rgba(168,85,247,0.08);border-bottom:1px solid rgba(168,85,247,0.15)}
+.console-head span{font-size:9px;font-weight:600;color:#a855f7;text-transform:uppercase;letter-spacing:.3px}
+.console-head .led{display:flex;gap:3px}
+.console-head .led span{width:7px;height:7px;border-radius:50%;background:rgba(68,85,102,0.5)}
+.console-head .led span.purple{background:#a855f7}
+.console-head .led span.red{background:#ff4466}
+#console{height:120px;padding:8px 12px;font-family:'Courier New',monospace;font-size:10px;line-height:1.6;overflow-y:auto;color:rgba(168,85,247,0.6);background:rgba(0,0,0,0.3)}
+#console .l{display:block}
+#console .l .t{color:rgba(168,85,247,0.2);margin-right:4px}
+#console .l .tag{font-weight:600;margin-right:4px}
+#console .l .tag.SUCCESS{color:#00d4ff}
+#console .l .tag.ERROR{color:#ff4466}
+#console .l .tag.WARN{color:#ffaa44}
+#console .l .tag.INFO{color:#66aaff}
+#console .l .tag.SPAM{color:#a855f7}
+#console .l .tag.WEBHOOK{color:#a855f7}
+#console .l .tag.FILE{color:#fbbf24}
+#console .l .tag.RATELIMIT{color:#ff4466;font-weight:700}
+#console .l .tag.RESET{color:#00ff88;font-weight:700}
+#console .l .tag.SPEED{color:#ff4466;font-weight:700}
+
+.notice{background:rgba(168,85,247,0.15);border:1px solid rgba(168,85,247,0.3);border-radius:8px;padding:6px 14px;margin-bottom:10px;display:none;align-items:center;gap:6px;backdrop-filter:blur(5px)}
+.notice .txt{color:#a855f7;font-size:11px;font-weight:500}
+.notice.ok{background:rgba(168,85,247,0.2);border-color:rgba(168,85,247,0.4)}
+.notice.ok .txt{color:#a855f7}
+.notice.error{background:rgba(255,68,102,0.2);border-color:#ff4466}
+.notice.error .txt{color:#ff4466}
+
+.checkbox-group{display:flex;gap:8px;margin:6px 0;flex-wrap:wrap;}
+.checkbox-group label{display:flex;align-items:center;gap:5px;font-size:11px;color:#c084fc;cursor:pointer;text-shadow:0 0 10px rgba(0,0,0,0.5)}
+.checkbox-group input[type="checkbox"]{width:16px;height:16px;accent-color:#a855f7;cursor:pointer;background:rgba(13,21,32,0.85)}
+
+@media(max-width:400px){
+.container{padding:12px}
+.header h1{font-size:15px}
+.btn{font-size:12px;padding:8px 6px;min-width:50px}
+.group input,.group textarea{font-size:12px;padding:7px 10px}
+.status-bar{flex-direction:column;align-items:stretch;gap:3px}
+.stats{justify-content:center}
+.file-btn{font-size:10px;padding:5px 10px}
+.file-info{font-size:9px}
+.file-info .name{max-width:80px}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="header">
+<div class="header-left">
+<div class="logo"><img src="https://i.pinimg.com/originals/84/4f/7e/844f7e76c6e1eeb8266be6b17362b385.gif" alt="logo"></div>
+<h1>Ghosly Tools <small>v4.0</small></h1>
+</div>
+<div class="badge">🔥 Sẵn Sàng</div>
+</div>
+
+<div class="notice" id="notice"><span class="txt" id="noticeText"></span></div>
+
+<div class="file-row">
+<button class="file-btn" onclick="document.getElementById('fileInput').click()">📄 Tải file</button>
+<button class="file-btn reset" onclick="resetFile()">🗑️ Reset</button>
+<div class="file-info"><span class="name" id="fileName">Chưa có file</span><span class="count" id="fileCount">0 tin</span></div>
+<input type="file" id="fileInput" accept=".txt">
+</div>
+
+<div class="group">
+<label>🔗 Webhook URL (mỗi dòng 1 webhook)</label>
+<textarea id="webhookInput" rows="2" placeholder="https://discord.com/api/webhooks/...&#10;https://discord.com/api/webhooks/..."></textarea>
+<button class="btn btn-test" style="margin-top:4px;padding:4px 12px;font-size:11px;min-width:auto;flex:0 1 auto;" onclick="addWebhooks()">➕ Thêm webhook</button>
+</div>
+
+<div class="list-box" id="webhookList">
+<div style="color:rgba(168,85,247,0.4);font-size:9px;text-align:center;padding:8px;">Chưa có webhook</div>
+</div>
+
+<div class="group">
+<label>👤 User ID (tag)</label>
+<input id="userId" placeholder="Nhập ID người dùng...">
+</div>
+
+<div class="group">
+<label>📝 Nội dung thay thế</label>
+<input id="message" placeholder="Nhập ngôn để spam">
+</div>
+
+<div class="checkbox-group">
+<label><input type="checkbox" id="tagUser" checked> Tag user</label>
+</div>
+
+<div class="btn-group">
+<button class="btn btn-start" id="startBtn" onclick="startSpam()">▶ SPAM</button>
+<button class="btn btn-stop" id="stopBtn" onclick="stopSpam()" disabled>⏹ DỪNG</button>
+<button class="btn btn-test" onclick="testWebhook()">✅ TEST</button>
+<button class="btn btn-clear" onclick="clearLog()">🗑️</button>
+</div>
+
+<div class="status-bar">
+<div class="status-dot"><span class="dot idle" id="statusDot"></span><span id="statusText">IDLE</span></div>
+<div class="stats">
+<span class="stat">📨 <span class="num" id="count">0</span></span>
+<span class="stat">⚡ <span class="num" id="speed">0</span>/s</span>
+<span class="stat">🔗 <span class="num" id="webhookCount">0</span></span>
+<span class="stat">🚫 <span class="num" id="rateLimitCount">0</span></span>
+<span class="stat">📌 <span class="num" id="positionDisplay">0</span></span>
+</div>
+</div>
+
+<div class="console-wrap">
+<div class="console-head"><span>📋 Console</span><div class="led"><span class="purple"></span><span></span><span></span></div></div>
+<div id="console"><span class="l"><span class="t">[SYSTEM]</span><span class="tag INFO">INFO</span> Tools H2K v4.0 - Extreme Speed</span></div>
+</div>
+
+</div>
+
+<script>
+// ============================================================
+// TOOLS H2K v4.0 - TỐC ĐỘ CỰC HẠN (XÓA BURST NHƯNG CHẠY NGẦM)
+// ============================================================
+
+// ----- STATE -----
+let isRunning = false;
+let msgCount = 0;
+let speedSamples = [];
+let webhookList = [];
+let messageList = [];
+let msgIndex = 0;
+let autoStartDone = false;
+let rateLimitCount = 0;
+let isResetting = false;
+let savedMsgIndex = 0;
+let activeRequests = 0;
+let maxConcurrent = 100;
+let stopRequested = false;
+let batchSize = 50; // Số lượng tin gửi 1 lần (tối ưu ngầm)
+let sendQueue = [];
+let isProcessing = false;
+
+// Cấu hình ngầm (tối ưu cực hạn)
+const CONFIG = {
+    antiRateLimit: true,
+    keepPosition: true,
+    resetAfter: 0,
+    maxBatchSize: 50, // Gửi 50 tin cùng lúc
+    webhookPerBatch: 10 // Mỗi webhook gửi 10 tin
+};
+
+// ----- DOM -----
+const $ = id => document.getElementById(id);
+const C = $('console');
+const statusDot = $('statusDot');
+const statusText = $('statusText');
+const countEl = $('count');
+const speedEl = $('speed');
+const webhookCountEl = $('webhookCount');
+const rateLimitCountEl = $('rateLimitCount');
+const positionDisplayEl = $('positionDisplay');
+const notice = $('notice');
+const noticeText = $('noticeText');
+
+// ----- FILE HANDLING -----
+$('fileInput').addEventListener('change', function(e) {
+    const file = this.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const content = event.target.result;
+        const lines = content.split(/\r?\n/)
+            .map(line => line.trim())
+            .filter(line => line.length > 0);
+        
+        messageList = lines;
+        msgIndex = 0;
+        savedMsgIndex = 0;
+        
+        $('fileName').textContent = file.name;
+        $('fileCount').textContent = lines.length + ' tin';
+        log(`📁 Load ${lines.length} tin từ "${file.name}"`, 'FILE');
+        showNotice(`✅ Đã load ${lines.length} tin từ file`, 'ok');
+        
+        if (lines.length > 0 && webhookList.length > 0) {
+            setTimeout(autoStart, 300);
+        }
+    };
+    reader.readAsText(file);
+});
+
+function resetFile() {
+    messageList = [];
+    msgIndex = 0;
+    savedMsgIndex = 0;
+    $('fileName').textContent = 'Chưa có file';
+    $('fileCount').textContent = '0 tin';
+    $('fileInput').value = '';
+    log('🗑️ Đã reset file', 'FILE');
+    showNotice('✅ Đã reset file', 'ok');
+}
+
+function getNextMessage() {
+    let msg;
+    if (messageList.length === 0) {
+        msg = $('message').value.trim() || '🔗 Webhook Spam!';
+    } else {
+        msg = messageList[msgIndex % messageList.length];
+        msgIndex = (msgIndex + 1) % messageList.length;
+        savedMsgIndex = msgIndex;
+    }
+    
+    if ($('tagUser').checked) {
+        const userId = $('userId').value.trim();
+        if (userId) {
+            msg = `<@${userId}> ${msg}`;
+        }
+    }
+    
+    return msg;
+}
+
+// ----- WEBHOOK MANAGEMENT -----
+function addWebhooks() {
+    const input = $('webhookInput');
+    const text = input.value.trim();
+    if (!text) {
+        showNotice('⚠️ Nhập webhook URLs!');
+        return;
+    }
+    
+    const urls = text.split('\n')
+        .map(l => l.trim())
+        .filter(l => l.length > 0 && l.includes('discord.com/api/webhooks/'));
+    
+    if (urls.length === 0) {
+        showNotice('⚠️ Không có webhook hợp lệ!');
+        return;
+    }
+    
+    let added = 0;
+    for (const url of urls) {
+        if (!webhookList.includes(url)) {
+            webhookList.push(url);
+            added++;
+        }
+    }
+    
+    input.value = '';
+    updateWebhookList();
+    log(`🔗 Đã thêm ${added} webhook. Tổng: ${webhookList.length}`, 'WEBHOOK');
+    showNotice(`✅ Đã thêm ${added} webhook`, 'ok');
+}
+
+function removeWebhook(index) {
+    webhookList.splice(index, 1);
+    updateWebhookList();
+    log(`🗑️ Đã xóa webhook #${index + 1}`, 'WARN');
+}
+
+function updateWebhookList() {
+    const container = $('webhookList');
+    webhookCountEl.textContent = webhookList.length;
+    if (webhookList.length === 0) {
+        container.innerHTML = '<div style="color:rgba(168,85,247,0.4);font-size:9px;text-align:center;padding:8px;">Chưa có webhook</div>';
+        return;
+    }
+    container.innerHTML = webhookList.map((url, i) => `
+        <div class="item">
+            <span class="text">#${i+1} ${url.slice(0, 35)}...</span>
+            <span class="remove" onclick="removeWebhook(${i})">✕</span>
+        </div>
+    `).join('');
+}
+
+// ----- SEND WEBHOOK SIÊU NHANH (KHÔNG CHỜ) -----
+function sendWebhookFast(url, content) {
+    return new Promise((resolve) => {
+        try {
+            const body = { content: content.slice(0, 2000) };
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            })
+            .then(r => {
+                if (r.status === 200 || r.status === 204) {
+                    resolve({ ok: true });
+                } else if (r.status === 429) {
+                    r.json().then(d => resolve({ ok: false, rate: true, wait: d.retry_after || 0.001 }));
+                } else if (r.status === 404) {
+                    resolve({ ok: false, invalid: true });
+                } else if (r.status === 403) {
+                    resolve({ ok: false, forbidden: true });
+                } else {
+                    resolve({ ok: false, error: r.status });
+                }
+            })
+            .catch(e => resolve({ ok: false, error: e.message }));
+        } catch(e) {
+            resolve({ ok: false, error: e.message });
+        }
+    });
+}
+
+// ----- GỬI Ồ ẠT KHÔNG DELAY (CHẠY NGẦM) -----
+async function extremeSpam() {
+    if (isProcessing || !isRunning || isResetting || webhookList.length === 0) {
+        if (isRunning && !isResetting) {
+            setTimeout(() => extremeSpam(), 0);
+        }
+        return;
+    }
+    
+    isProcessing = true;
+    const webhooks = [...webhookList];
+    const batchCount = Math.min(CONFIG.maxBatchSize, messageList.length || 50);
+    let totalSent = 0;
+    let totalRateLimit = 0;
+    
+    try {
+        // Tạo batch tin nhắn
+        const messages = [];
+        for (let i = 0; i < batchCount; i++) {
+            if (!isRunning || isResetting) break;
+            const msg = getNextMessage();
+            if (msg) messages.push(msg);
+        }
+        
+        if (messages.length === 0) {
+            isProcessing = false;
+            if (isRunning) setTimeout(() => extremeSpam(), 0);
+            return;
+        }
+        
+        // Gửi tất cả tin nhắn đến tất cả webhook cùng lúc
+        const allPromises = [];
+        const allResults = [];
+        
+        for (const webhook of webhooks) {
+            for (const msg of messages) {
+                if (!isRunning || isResetting) break;
+                allPromises.push(sendWebhookFast(webhook, msg));
+            }
+        }
+        
+        // Chờ tất cả hoàn thành (không đợi lâu)
+        const results = await Promise.allSettled(allPromises);
+        
+        let successCount = 0;
+        let rateLimitCountTemp = 0;
+        
+        for (const result of results) {
+            if (result.status === 'fulfilled' && result.value.ok) {
+                successCount++;
+                msgCount++;
+                totalSent++;
+            } else if (result.status === 'fulfilled' && result.value.rate) {
+                rateLimitCountTemp++;
+                totalRateLimit++;
+            } else if (result.status === 'fulfilled' && (result.value.invalid || result.value.forbidden)) {
+                // Xóa webhook hỏng nếu cần
+            }
+        }
+        
+        // Xử lý rate limit
+        if (rateLimitCountTemp > 0 && CONFIG.antiRateLimit) {
+            rateLimitCount += rateLimitCountTemp;
+            rateLimitCountEl.textContent = rateLimitCount;
+            
+            // Reset ngay lập tức nếu có rate limit
+            if (CONFIG.resetAfter === 0) {
+                log(`🔄 RESET - ${rateLimitCountTemp} rate limits`, 'RESET');
+                isResetting = true;
+                await new Promise(r => setTimeout(r, 0));
+                if (CONFIG.keepPosition) {
+                    msgIndex = savedMsgIndex;
+                }
+                isResetting = false;
+            }
+        }
+        
+        if (successCount > 0) {
+            countEl.textContent = msgCount;
+            updateSpeed(msgCount);
+            
+            // Log ít để không làm chậm
+            if (msgCount % 200 === 0) {
+                log(`⚡ ${successCount}/${allPromises.length} - Tổng: ${msgCount} - Vị trí: ${msgIndex}`, 'SPEED');
+            }
+        }
+        
+        // Xóa webhook hỏng
+        if (results.some(r => r.status === 'fulfilled' && r.value.invalid)) {
+            // Xóa webhook đã chết
+            const invalidIndices = [];
+            for (let i = 0; i < results.length; i++) {
+                if (results[i].status === 'fulfilled' && results[i].value.invalid) {
+                    // Tìm webhook tương ứng
+                }
+            }
+        }
+        
+    } catch(e) {
+        // Bỏ qua lỗi
+    }
+    
+    isProcessing = false;
+    
+    // Tiếp tục spam ngay lập tức
+    if (isRunning && !isResetting && webhookList.length > 0) {
+        setTimeout(() => extremeSpam(), 0);
+    }
+}
+
+// ----- UPDATE SPEED -----
+function updateSpeed(count) {
+    const now = Date.now();
+    speedSamples.push({ time: now, count: count });
+    speedSamples = speedSamples.filter(s => now - s.time < 1000);
+    if (speedSamples.length > 1) {
+        const f = speedSamples[0];
+        const l = speedSamples[speedSamples.length - 1];
+        const dt = (l.time - f.time) / 1000;
+        if (dt > 0) {
+            const speed = Math.round((l.count - f.count) / dt);
+            speedEl.textContent = speed > 999999 ? '999999+' : speed;
+        }
+    }
+}
+
+// ----- TEST WEBHOOK -----
+async function testWebhook() {
+    if (webhookList.length === 0) {
+        showNotice('⚠️ Thêm webhook!');
+        return;
+    }
+    
+    const url = webhookList[0];
+    const content = '✅ Test webhook thành công!';
+    
+    log(`🔍 Đang test webhook #1...`, 'INFO');
+    const result = await sendWebhookFast(url, content);
+    
+    if (result.ok) {
+        log(`✅ Webhook #1 hoạt động tốt!`, 'SUCCESS');
+        showNotice(`✅ Webhook #1 OK`, 'ok');
+    } else if (result.invalid) {
+        log('❌ Webhook không tồn tại!', 'ERROR');
+        showNotice('❌ Webhook không hợp lệ!', 'error');
+    } else if (result.forbidden) {
+        log('❌ Webhook bị chặn!', 'ERROR');
+        showNotice('❌ Webhook bị chặn!', 'error');
+    } else if (result.rate) {
+        log(`⏸️ Rate limit!`, 'RATELIMIT');
+        showNotice(`⏸️ Webhook bị rate limit!`, 'error');
+    } else {
+        log(`❌ Lỗi: ${result.error || 'unknown'}`, 'ERROR');
+        showNotice('❌ Lỗi webhook!', 'error');
+    }
+}
+
+// ----- START/STOP -----
+async function startSpam() {
+    if (isRunning || isResetting) {
+        return;
+    }
+    
+    if (webhookList.length === 0) {
+        showNotice('⚠️ Thêm webhook!');
+        return;
+    }
+    
+    const hasFile = messageList.length > 0;
+    const hasManual = $('message').value.trim().length > 0;
+    if (!hasFile && !hasManual) {
+        showNotice('⚠️ Tải file hoặc nhập nội dung!');
+        return;
+    }
+    
+    // Khởi tạo
+    if (!savedMsgIndex || !CONFIG.keepPosition) {
+        msgCount = 0;
+        speedSamples = [];
+        rateLimitCount = 0;
+        isResetting = false;
+        isProcessing = false;
+        if (messageList.length > 0 && !savedMsgIndex) {
+            msgIndex = 0;
+        }
+    } else {
+        msgIndex = savedMsgIndex;
+        log(`📌 Khôi phục vị trí: ${msgIndex}`, 'INFO');
+    }
+    
+    isRunning = true;
+    $('startBtn').disabled = true;
+    $('stopBtn').disabled = false;
+    statusDot.className = 'dot running';
+    statusText.textContent = 'SPAMMING';
+    
+    log('▶️ BẮT ĐẦU SPAM!', 'SPAM');
+    log(`🔗 ${webhookList.length} webhook`, 'INFO');
+    log(`⚡ Tốc độ cực hạn - Gửi ${CONFIG.maxBatchSize} tin/lần`, 'SPEED');
+    log(`📌 Vị trí hiện tại: ${msgIndex}`, 'INFO');
+    log(`🔥 Extreme Speed Mode - KHÔNG CHỜ ĐỢI!`, 'SPEED');
+    
+    // Bắt đầu spam ngay
+    setTimeout(() => {
+        if (isRunning) extremeSpam();
+    }, 0);
+}
+
+function stopSpam() {
+    if (!isRunning) return;
+    
+    if (CONFIG.keepPosition) {
+        savedMsgIndex = msgIndex;
+        log(`📌 Đã lưu vị trí: ${savedMsgIndex}`, 'INFO');
+    }
+    
+    isRunning = false;
+    isProcessing = false;
+    $('startBtn').disabled = false;
+    $('stopBtn').disabled = true;
+    statusDot.className = 'dot idle';
+    statusText.textContent = 'IDLE';
+    log(`⏹️ DỪNG. Tổng: ${msgCount} tin - Vị trí: ${msgIndex}`, 'WARN');
+}
+
+// ----- AUTO START -----
+function autoStart() {
+    if (autoStartDone) return;
+    const hasFile = messageList.length > 0;
+    const hasManual = $('message').value.trim().length > 0;
+    
+    if (webhookList.length > 0 && (hasFile || hasManual)) {
+        autoStartDone = true;
+        log('🚀 Tự động spam sau 0.3s...', 'INFO');
+        setTimeout(() => startSpam(), 300);
+    }
+}
+
+// ----- UI HELPERS -----
+function log(m, t = 'INFO') {
+    const time = new Date().toLocaleTimeString();
+    const tags = { INFO: 'INFO', SUCCESS: 'SUCCESS', ERROR: 'ERROR', WARN: 'WARN', SPAM: 'SPAM', WEBHOOK: 'WEBHOOK', FILE: 'FILE', RATELIMIT: 'RATELIMIT', RESET: 'RESET', SPEED: 'SPEED' };
+    const tag = tags[t] || 'INFO';
+    
+    const l = document.createElement('span');
+    l.className = 'l';
+    l.innerHTML = `<span class="t">[${time}]</span><span class="tag ${tag}">${tag}</span> ${m}`;
+    C.appendChild(l);
+    C.scrollTop = C.scrollHeight;
+    if (C.children.length > 50) C.removeChild(C.firstChild);
+}
+
+function showNotice(msg, type = '') {
+    notice.className = 'notice' + (type === 'ok' ? ' ok' : '') + (type === 'error' ? ' error' : '');
+    notice.style.display = 'flex';
+    noticeText.textContent = msg;
+    clearTimeout(resetTimer);
+    resetTimer = setTimeout(() => notice.style.display = 'none', 3000);
+}
+
+function clearLog() {
+    C.innerHTML = '<span class="l"><span class="t">[SYSTEM]</span><span class="tag INFO">INFO</span> Log đã xóa</span>';
+}
+
+// ----- KEYBOARD -----
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && e.ctrlKey) {
+        e.preventDefault();
+        isRunning ? stopSpam() : startSpam();
+    }
+    if (e.key === 'Escape' && isRunning) stopSpam();
+});
+
+// ----- INIT -----
+log('📄 Tools Spam webhook v4.0 - Extreme Speed', 'FILE');
+log('⚡ Cực nhanh', 'SPEED');
+log('❌NO RATE LIMIT', 'INFO');
+log('🔥 Tốc độ tối đa tuyệt đối!', 'SPEED');
+log('😈 Tools By H2K - v4.0', 'INFO');
+
+setTimeout(autoStart, 1000);
+
+console.log('[ToolsH2K] v4.0 loaded - Extreme Speed');
+</script>
+</body>
+  </html>
